@@ -11,7 +11,12 @@ import { IconX } from "@tabler/icons-react";
 import { LinkWrapper } from "@/components/custom-ui/link-wrapper";
 import LoginDropdown from "./elements/login-dropdown";
 import { ROUTES } from "@/constants/routes";
+import type { StaticRoute } from "@/constants/routes";
 import type { NavigationOption } from "@/types";
+
+// Literal path so the nav link is never dropped by production tree-shaking or chunk splitting.
+const DAMODARAN_AI_PATH = "/damodaran-ai" as StaticRoute;
+
 export const navbarClass = "bg-gray-dark-300 w-full";
 export const navbarStyle = { backdropFilter: "blur(12.5px)" };
 
@@ -29,7 +34,7 @@ export const NavbarContent = ({
     const base = siteConfig.navigation.main as NavigationOption[];
 
     const hasAskDamodaran = base.some(
-      (item) => "href" in item && item.href === ROUTES.DAMODARAN_AI
+      (item) => "href" in item && item.href === DAMODARAN_AI_PATH
     );
     if (hasAskDamodaran) {
       return base;
@@ -37,7 +42,7 @@ export const NavbarContent = ({
 
     const askItem: NavigationOption = {
       label: "Ask Damodaran",
-      href: ROUTES.DAMODARAN_AI,
+      href: DAMODARAN_AI_PATH,
     };
 
     const aboutIndex = base.findIndex(
