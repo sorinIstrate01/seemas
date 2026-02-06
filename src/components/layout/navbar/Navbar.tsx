@@ -17,6 +17,10 @@ import type { NavigationOption } from "@/types";
 // Literal path so the nav link is never dropped by production tree-shaking or chunk splitting.
 const DAMODARAN_AI_PATH = "/damodaran-ai" as StaticRoute;
 
+// Desktop nav link class matching NavigationItem (light variant) so "Ask Damodaran" matches other items.
+const DESKTOP_NAV_LINK_CLASS =
+  "text-zinc-600 hover:bg-white hover:text-zinc-600 data-[state=open]:text-zinc-800 data-[state=open]:bg-white group-[.dark-mode]:text-zinc-300 group-[.dark-mode]:outline-neutral-800 group-[.dark-mode]:hover:bg-neutral-900 group-[.dark-mode]:hover:outline group-[.dark-mode]:data-[state=open]:bg-neutral-900 group-[.dark-mode]:data-[state=open]:outline group-[.dark-mode]:data-[state=open]:text-white [&_svg]:size-4 gap-1 px-3 py-2 rounded-lg bg-transparent";
+
 export const navbarClass = "bg-gray-dark-300 w-full";
 export const navbarStyle = { backdropFilter: "blur(12.5px)" };
 
@@ -70,9 +74,21 @@ export const NavbarContent = ({
           </Link>
         </div>
         <div className={cn("hidden xl:flex items-center w-fit gap-3")}>
-          {navItems.map((item) => (
-            <NavigationItem key={item.label} data={item} variant={"light"} />
-          ))}
+          {navItems.map((item) =>
+            item.label === "Ask Damodaran" && "href" in item ? (
+              <Button
+                key="ask-damodaran"
+                size="content"
+                variant="ghost"
+                className={cn(DESKTOP_NAV_LINK_CLASS)}
+                asChild
+              >
+                <Link href={DAMODARAN_AI_PATH}>Ask Damodaran</Link>
+              </Button>
+            ) : (
+              <NavigationItem key={item.label} data={item} variant={"light"} />
+            )
+          )}
         </div>
 
         <div className="flex items-center w-fit gap-3">
