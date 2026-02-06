@@ -27,7 +27,7 @@ const WhyUs = () => {
         <div className="relative z-[2] flex justify-between flex-col gap-10 xl:gap-8 xl:flex-row">
           <div className="w-auto md:max-w-[568px] flex flex-col justify-between xl:max-w-[550px]">
             <div className="flex flex-col">
-                <h5 id="why-us-title" className="text-subtitle-xl md:text-h4 xl:text-h3 xl:max-w-[428px] mb-4">
+                <h5 id="why-us-title" className="text-zinc-900 text-subtitle-xl md:text-h4 xl:text-h3 xl:max-w-[428px] mb-4">
                     Why <span className="text-blue-primary">Teams</span> <br className="block md:hidden"/>Choose SeemaS
                 </h5>
                 <p className="text-body-s xl:text-body-m text-zinc-700 mb-4">

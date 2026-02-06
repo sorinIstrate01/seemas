@@ -57,7 +57,7 @@ const Hero = () => {
         subtitle="Deep domain expertise. Built for global compliance."
         description="SeemaS untangles international tax complexity by streamlining data intake, economic analysis, and documentation in one secure platform - empowering multinational teams to improve speed, accuracy, and audit readiness."
         titleClassName="max-w-[600px] xl:max-w-[872px] text-h4"
-        descriptionClassName="md:max-w-[575px] p-0 mb-8 xl:mb-6 xl:text-body-l"
+        descriptionClassName="md:max-w-[575px] p-0 mb-8 xl:mb-6 xl:max-w-[954px] xl:text-body-l"
         className="text-white relative"
         buttonConfig={[
           {

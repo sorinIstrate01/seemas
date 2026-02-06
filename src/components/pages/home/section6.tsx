@@ -29,7 +29,7 @@ const cards: CardProps[] = [
   {
     image: "/assets/chat-view-card.png",
     title: "Personal AI Valuation Expert",
-    description: `Got questions? SeemaS has answers — fast! Just speak, type, or upload, and let the magic happen. Whatever you need, we’ve got you covered.`,
+    description: `Have questions? SeemaS has answers — fast! Just speak, type, or upload, and let the magic happen. Whatever you need, we’ve got you covered.`,
   },
 ];
 
@@ -45,7 +45,7 @@ const Section6 = ({ sectionHeadingHeadingLevel = "h4" }: Section6Props) => {
       <SectionHeader
         headingLevel={sectionHeadingHeadingLevel}
         title="Meet Damodaran AI"
-        description={`Imagine having a world-class valuation expert just a consult away — anytime you need! \nNow with Damodaran AI, you do!`}
+        description={`Have a world-class valuation expert just a click away.`}
         className="gap-4"
       />
       <div className="flex flex-col xl:flex-row gap-6 justify-center">

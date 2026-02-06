@@ -42,6 +42,7 @@ const TeamSection = () => {
           }
           titleClassName="text-h4 md:text-h3"
           descriptionClassName="text-body-m"
+          headingLevel="h2"
         />
         <Tabs defaultValue={tabs[0].label} className="flex flex-col gap-14">
           <TabsList className="gap-2">

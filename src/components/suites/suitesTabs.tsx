@@ -65,7 +65,7 @@ const SuitesTabs = ({
               disabled={tab.disabled}
               onClick={() => setActive(tab.value)}
               data-state={isActive ? "active" : "inactive"}
-              className={`py-2 px-3 text-body-s rounded-[10px] hover:bg-gray-100 focus-visible:bg-gray-100 transition-all duration-300 ${isActive ? "bg-gray-100" : ""}`}
+              className={`font-medium text-zinc-800 py-2 px-3 text-body-s rounded-[10px] hover:bg-gray-100 focus-visible:bg-gray-100 transition-all duration-300 ${isActive ? "bg-gray-100" : ""}`}
             >
               {tab.title}
             </button>

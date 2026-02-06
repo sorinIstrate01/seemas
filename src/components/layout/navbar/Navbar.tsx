@@ -27,36 +27,37 @@ export const NavbarContent = ({
   isInsideDrawer?: boolean;
   children?: React.ReactNode;
 }) => {
-  // Ensure "Ask Damodaran" is always present in main navigation on desktop.
-  // If it's already in the config, we keep the original order.
-  // If it's missing (for any reason in a built bundle), we inject it before "About Us".
+  // Build nav items ensuring "Ask Damodaran" is always present with correct href.
+  // This is independent of config serialization issues in production builds.
   const navItems: NavigationOption[] = (() => {
-    const base = siteConfig.navigation.main as NavigationOption[];
-
-    const hasAskDamodaran = base.some(
-      (item) => "href" in item && item.href === DAMODARAN_AI_PATH
-    );
-    if (hasAskDamodaran) {
-      return base;
-    }
-
-    const askItem: NavigationOption = {
+    // Get base config, handling cases where it might be undefined or malformed
+    const configNav = (siteConfig?.navigation?.main as NavigationOption[]) || [];
+    
+    // Always create the "Ask Damodaran" item with literal path to avoid tree-shaking issues
+    const askDamodaranItem: NavigationOption = {
       label: "Ask Damodaran",
       href: DAMODARAN_AI_PATH,
     };
 
-    const aboutIndex = base.findIndex(
+    // Filter out any existing "Ask Damodaran" items (they might have broken hrefs)
+    const filteredNav = configNav.filter(
+      (item) => item.label !== "Ask Damodaran"
+    );
+
+    // Find where to insert "Ask Damodaran" (before "About Us")
+    const aboutIndex = filteredNav.findIndex(
       (item) => item.label === "About Us"
     );
 
+    // Insert "Ask Damodaran" before "About Us", or append if "About Us" not found
     if (aboutIndex === -1) {
-      return [...base, askItem];
+      return [...filteredNav, askDamodaranItem];
     }
 
     return [
-      ...base.slice(0, aboutIndex),
-      askItem,
-      ...base.slice(aboutIndex),
+      ...filteredNav.slice(0, aboutIndex),
+      askDamodaranItem,
+      ...filteredNav.slice(aboutIndex),
     ];
   })();
 

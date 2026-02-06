@@ -38,7 +38,7 @@ const TestimonialsSection = () => {
       <section aria-label="Testimonials">
         <Carousel className="flex flex-col gap-8 md:gap-14">
           <div className="flex items-center gap-2.5">
-            <h6 className="grow text-subtitle-xl md:text-h4 text-zinc-900 text-center xl:text-left">
+            <h6 className="grow text-subtitle-xl md:text-h4 text-zinc-800 text-center xl:text-left">
               Testimonials
             </h6>
 

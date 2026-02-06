@@ -4,11 +4,21 @@ import Logo from "../../../../public/footer/logo";
 import FooterItem from "./components/footer-item";
 import LegalSection from "./components/legal-section";
 import SocialIcon from "./components/social-icon";
+import FacebookIcon from "@/components/icons/facebook-icon";
+import XIcon from "@/components/icons/x-icon";
 
 const socialIcons = [
   {
+    icon: <FacebookIcon />,
+    href: "https://www.facebook.com/seemas.ai",
+  },
+  {
     icon: <LinkedinIcon />,
     href: "https://www.linkedin.com/company/seemas-ai",
+  },
+  {
+    icon: <XIcon />,
+    href: "https://x.com/SeemaS_AI",
   },
 ];
 
@@ -19,8 +29,8 @@ const footerLinks = [
       { label: "Overview", href: ROUTES.PLATFORM_OVERVIEW },
       { label: "Valuation Suite", href: ROUTES.VALUATION_SUITE },
       {
-        label: "Global Tax Management",
-        href: ROUTES.GLOBAL_TAX_MANAGEMENT,
+        label: "Transfer Pricing Suite",
+        href: ROUTES.TRANSFER_PRICING,
       },
       { label: "Damodaran AI", href: ROUTES.DAMODARAN_AI },
     ],
@@ -36,7 +46,6 @@ const footerLinks = [
   {
     title: "Resources",
     items: [
-      { label: "FAQ", href: ROUTES.FAQ },
       { label: "SeemaSphere", href: ROUTES.SPHERE },
     ],
   },
