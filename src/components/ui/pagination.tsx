@@ -52,6 +52,7 @@ function PaginationLink({
   href,
   children,
   size = "iconS",
+  iconOnly,
   ...props
 }: PaginationLinkProps) {
   return (
@@ -61,7 +62,7 @@ function PaginationLink({
       className={cn(
         "text-button block",
         className,
-        buttonVariants({ variant: "ghost", size })
+        buttonVariants({ variant: "ghost", size, iconOnly })
       )}
       aria-current={isActive ? "page" : undefined}
       data-slot="pagination-link"
