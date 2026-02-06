@@ -12,9 +12,9 @@ import {
 } from "@tabler/icons-react";
 import PatentIcon from "@/components/icons/patent-icon";
 import Image from "next/image";
-const background = "/assets/why-us-background.png";
-const backgroundTablet = "/assets/why-us-background-tablet.png";
-const backgroundMobile = "/assets/why-us-background-mobile.png";
+const background = "/assets/Why-us-background.png";
+const backgroundTablet = "/assets/Why-us-background-tablet.png";
+const backgroundMobile = "/assets/Why-us-background-mobile.png";
 
 const WhyUs = () => {
   return (

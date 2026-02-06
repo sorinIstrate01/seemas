@@ -32,7 +32,7 @@ const SuitesSection = ({ headingLevel = "h2", sectionWrapperClassName }: { headi
         <Image src="/assets/suites-background.jpg" alt="suites-background" width={1920} height={1080}
           className="w-full h-full object-cover hidden md:block"
         />
-        <Image src="/assets/suites-background-mobile.png" alt="suites-background-mobile" width={1920} height={1080}
+        <Image src="/assets/Suites-background-mobile.png" alt="suites-background-mobile" width={1920} height={1080}
           className="w-full h-full object-cover block md:hidden"
         />
       </div>
