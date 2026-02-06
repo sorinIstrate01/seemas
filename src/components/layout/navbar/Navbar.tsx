@@ -10,7 +10,6 @@ import { IconX, IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import { LinkWrapper } from "@/components/custom-ui/link-wrapper";
 import LoginDropdown from "./elements/login-dropdown";
 import { ROUTES } from "@/constants/routes";
-import type { StaticRoute } from "@/constants/routes";
 import type { NavigationOption } from "@/types";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
 
