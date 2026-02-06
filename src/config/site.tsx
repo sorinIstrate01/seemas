@@ -2,7 +2,6 @@ import { NavigationOption, TExternalLoginOption, TSubLink } from "@/types";
 
 import {
   IconBuilding,
-  IconChartLine,
   IconArrowsExchange2,
   IconBrandYoutube,
   IconBrandX,
@@ -45,14 +44,9 @@ export const products_navigation: TSubLink[] = [
     icon: IconArrowsExchange2,
   },
   {
-    label: "Entity Valuation",
-    href: ROUTES.ENTITY_VALUATION,
+    label: "Valuation Suite",
+    href: ROUTES.VALUATION_SUITE,
     icon: IconBuilding,
-  },
-  {
-    label: "Financial Instruments",
-    href: ROUTES.FINANCIAL_INSTRUMENTS,
-    icon: IconChartLine,
   },
 ];
 

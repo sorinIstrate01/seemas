@@ -15,25 +15,25 @@ const Hero = () => {
       <div className="absolute w-full h-[600px] md:h-[766px] xl:h-[766px] xl:pl-[95px] xl:pr-[58px] top-[61px] md:top-[70px] left-0">
         <div className="relative w-full h-full">
           <Image
-            src={"/corporate-tax-compliance-and-filing/bg-lines.svg"}
+            src={"/overview/steps-section/bg-lines.svg"}
             alt="bg-lines"
             fill
             className="h-full w-full object-contain md:hidden"
           />
           <Image
-            src={"/corporate-tax-compliance-and-filing/bg-lines-md.svg"}
+            src={"/overview/steps-section/bg-lines.svg"}
             alt="bg-lines"
             fill
             className="h-full w-full object-contain hidden md:block lg:hidden"
           />
           <Image
-            src={"/corporate-tax-compliance-and-filing/bg-lines-lg.svg"}
+            src={"/overview/steps-section/bg-lines.svg"}
             alt="bg-lines"
             fill
             className="h-full w-full object-contain hidden lg:block xl:hidden"
           />
           <Image
-            src={"/corporate-tax-compliance-and-filing/bg-lines-xl.svg"}
+            src={"/overview/steps-section/bg-lines.svg"}
             alt="bg-lines"
             fill
             className="h-full w-full object-contain hidden xl:block"
