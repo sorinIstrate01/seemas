@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seemas-website
+  namespace: dev
+  labels:
+    app: seemas-website
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seemas-website
+  strategy:
+    #replace pod one by one
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: seemas-website
+    spec:
+      #make sure app can access AWS resources s3/dynamo etc
+      serviceAccountName: app-aws-service-account
+      containers:
+        - name: seemas-website
+          image: 668426476795.dkr.ecr.us-east-1.amazonaws.com/seemas-website:dev-latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          #be careful with the following, the public end points must exist and return 200 if live
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 15 # Shorter to speed up rollout
+            periodSeconds: 30 # Check every 5s
+            failureThreshold: 3 # After 3 failures, considered not ready
+            successThreshold: 1 # 1 success is enough to mark as ready
+            timeoutSeconds: 10 # HTTP timeout
+
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 60 # Let app warm up fully
+            periodSeconds: 60 # Check every 60s
+            failureThreshold: 3 # Restart after 3 failures
+            timeoutSeconds: 10
+
+          envFrom:
+            #Config only for this app
+            - configMapRef:
+                name: seemas-website-config
+            #this is available for all apps in the cluster
+            - secretRef:
+                name: cluster-secrets
+            #This is availaile for all apps in same name space, e.g dev/stage/prod etc.
+            - secretRef:
+                name: env-secrets
+
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: seemas-website
+  namespace: dev
+  labels:
+    app: seemas-website
+
+spec:
+  ports:
+    - port: 3000
+      targetPort: 3000
+      name: default
+  selector:
+    app: seemas-website
+  type: ClusterIP

@@ -1,0 +1,33 @@
+####
+##The following VARs are from Mecury Backend, this just serves as sample for education purpose.
+####
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: seemas-website-config
+  namespace: dev
+data:
+  ENVIRONMENT: "dev"
+  AWS_REGION: "us-east-1"
+
+  RDS_DBNAME: "website_dev"
+  BASE_URL: "https://web.dev.seemas.io"
+
+  #This should be unique channel for each app. channel is 0-15, can beed increased from AWS
+  #REDIS_CACHE_LOCATION: "redis://main-redis.y7btrj.0001.use1.cache.amazonaws.com:6379/0"
+  #we have a shared bucket for all, feel free to overide this, may need to set up RBAC within cluster, assume AWS keys in ENV if use Django S3 storage.
+  #AWS_RESOURCES_BUCKET_NAME: "seemas-data-bucket"
+
+  #----Assume the following are in cluster---#
+  #"DOCDB_PASSWORD",
+  #"DOCDB_USER",
+  #"OPENAI_API_KEY",
+  #"OPENAI_API_KEY_REPORT",
+  #"OPENSEARCH_HOST",
+  #"OPENSEARCH_PASSWORD",
+  #"OPENSEARCH_PORT",
+  #"OPENSEARCH_USER",
+  #"RDS_HOSTNAME",
+  #"RDS_PASSWORD",
+  #"RDS_PORT",
+  #"RDS_USERNAME"

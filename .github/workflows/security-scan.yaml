@@ -1,0 +1,73 @@
+name: OSS Security - Docker scan
+
+on:
+  pull_request:
+  # push:
+  #   branches: [ main, dev, stage ]
+  # workflow_dispatch:
+
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: read
+  security-events: write
+
+env:
+  IMAGE_NAME: ${{ github.event.repository.name }}
+  IMAGE_REF: ${{ github.event.repository.name }}:${{ github.sha }}
+  IAC_DIR: ./terraform
+  TRIVY_SEVERITY: CRITICAL,HIGH
+
+jobs:
+  build-and-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build local image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: ${{ env.IMAGE_REF }}
+
+      # 1) Generate SARIF for Code Scanning (never fail here)
+      - name: Trivy image → SARIF
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: image
+          image-ref: ${{ env.IMAGE_REF }}
+          format: sarif
+          output: trivy-image.sarif
+          ignore-unfixed: true
+          vuln-type: os,library
+          severity: CRITICAL,HIGH,MEDIUM,LOW,UNKNOWN
+          exit-code: '0'   # always write SARIF
+
+      - name: Upload SARIF
+        if: ${{ !github.event.pull_request.head.repo.fork }}
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-image.sarif
+
+      # 2) Separate severity gate (fail only on TRIVY_SEVERITY; vuln-only, no secrets)
+      - name: Trivy severity gate (fail on ${{ env.TRIVY_SEVERITY }})
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: image
+          image-ref: ${{ env.IMAGE_REF }}
+          ignore-unfixed: true
+          vuln-type: os,library
+          scanners: vuln
+          severity: ${{ env.TRIVY_SEVERITY }}
+          exit-code: '1'   # fail pipeline when High/Critical found
+          format: table    # human-readable log output

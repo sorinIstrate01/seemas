@@ -1,0 +1,56 @@
+name: Build and deploy Dev
+
+on:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
+
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: read
+  security-events: write
+
+env:
+  ENV: dev
+  KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG }}
+  #NEXT_PUBLIC_xxx go here, passed to Make automcatically. check the reference in Makefile
+  NEXT_PUBLIC_ENV: "dev"
+  NODE_ENV: "develop"
+  NEXT_PUBLIC_SANITY_PROJECT_ID: "t3q3hkjd"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      # Add steps to install and test
+      #- name: Run  tests
+      #  run: npm test
+
+      - name: Build and deploy Docker image
+        run: make $ENV
+
+      - name: Update Kubernetes deployment
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: apply -f deploy_specs/$ENV --recursive
+
+      - name: Restart deployment rollout
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: rollout restart deployment ${{ github.event.repository.name }} -n $ENV
