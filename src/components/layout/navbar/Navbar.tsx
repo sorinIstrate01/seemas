@@ -1,4 +1,3 @@
-import NavigationItem from "@/components/custom-ui/navigation-item";
 import { siteConfig } from "@/config/site";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -7,17 +6,22 @@ import SeemasLogo from "@/assets/seemas-logo.svg";
 import { cn } from "@/lib/utils";
 import NavbarMobile from "./NavbarMobile";
 import { DrawerClose } from "@/components/ui/drawer";
-import { IconX } from "@tabler/icons-react";
+import { IconX, IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import { LinkWrapper } from "@/components/custom-ui/link-wrapper";
 import LoginDropdown from "./elements/login-dropdown";
 import { ROUTES } from "@/constants/routes";
 import type { StaticRoute } from "@/constants/routes";
 import type { NavigationOption } from "@/types";
+import { Popover, PopoverTrigger } from "@/components/ui/popover";
 
-// Literal path so the nav link is never dropped by production tree-shaking or chunk splitting.
-const DAMODARAN_AI_PATH = "/damodaran-ai" as StaticRoute;
+// Literal paths to avoid production tree-shaking issues
+const NAV_PATHS = {
+  PLATFORM_OVERVIEW: "/platform-overview",
+  DAMODARAN_AI: "/damodaran-ai",
+  ABOUT_US: "/about-us",
+} as const;
 
-// Desktop nav link class matching NavigationItem (light variant) so "Ask Damodaran" matches other items.
+// Desktop nav link class matching NavigationItem (light variant)
 const DESKTOP_NAV_LINK_CLASS =
   "text-zinc-600 hover:bg-white hover:text-zinc-600 data-[state=open]:text-zinc-800 data-[state=open]:bg-white group-[.dark-mode]:text-zinc-300 group-[.dark-mode]:outline-neutral-800 group-[.dark-mode]:hover:bg-neutral-900 group-[.dark-mode]:hover:outline group-[.dark-mode]:data-[state=open]:bg-neutral-900 group-[.dark-mode]:data-[state=open]:outline group-[.dark-mode]:data-[state=open]:text-white [&_svg]:size-4 gap-1 px-3 py-2 rounded-lg bg-transparent";
 
@@ -31,39 +35,23 @@ export const NavbarContent = ({
   isInsideDrawer?: boolean;
   children?: React.ReactNode;
 }) => {
-  // Build nav items ensuring "Ask Damodaran" is always present with correct href.
-  // This is independent of config serialization issues in production builds.
-  const navItems: NavigationOption[] = (() => {
-    // Get base config, handling cases where it might be undefined or malformed
-    const configNav = (siteConfig?.navigation?.main as NavigationOption[]) || [];
+  // Get nav items from config - we'll extract URLs during render to avoid tree-shaking issues
+  const navItems = (siteConfig?.navigation?.main as NavigationOption[]) || [];
+  
+  // Helper to get safe href for a nav item (uses literal paths to avoid production issues)
+  const getSafeHref = (item: NavigationOption): string | undefined => {
+    // Use label-based mapping first to get literal paths (works even if ROUTES is tree-shaken)
+    if (item.label === "Platform Overview") return NAV_PATHS.PLATFORM_OVERVIEW;
+    if (item.label === "Ask Damodaran") return NAV_PATHS.DAMODARAN_AI;
+    if (item.label === "About Us") return NAV_PATHS.ABOUT_US;
     
-    // Always create the "Ask Damodaran" item with literal path to avoid tree-shaking issues
-    const askDamodaranItem: NavigationOption = {
-      label: "Ask Damodaran",
-      href: DAMODARAN_AI_PATH,
-    };
-
-    // Filter out any existing "Ask Damodaran" items (they might have broken hrefs)
-    const filteredNav = configNav.filter(
-      (item) => item.label !== "Ask Damodaran"
-    );
-
-    // Find where to insert "Ask Damodaran" (before "About Us")
-    const aboutIndex = filteredNav.findIndex(
-      (item) => item.label === "About Us"
-    );
-
-    // Insert "Ask Damodaran" before "About Us", or append if "About Us" not found
-    if (aboutIndex === -1) {
-      return [...filteredNav, askDamodaranItem];
+    // For items with href property, use it if it's a valid string
+    if ("href" in item && item.href && typeof item.href === "string") {
+      return item.href;
     }
-
-    return [
-      ...filteredNav.slice(0, aboutIndex),
-      askDamodaranItem,
-      ...filteredNav.slice(aboutIndex),
-    ];
-  })();
+    
+    return undefined;
+  };
 
   return (
     <div className="max-w-[1280px] mx-auto py-4 px-4 w-full md:px-8 xl:px-0">
@@ -74,21 +62,68 @@ export const NavbarContent = ({
           </Link>
         </div>
         <div className={cn("hidden xl:flex items-center w-fit gap-3")}>
-          {navItems.map((item) =>
-            item.label === "Ask Damodaran" && "href" in item ? (
-              <Button
-                key="ask-damodaran"
-                size="content"
-                variant="ghost"
-                className={cn(DESKTOP_NAV_LINK_CLASS)}
-                asChild
-              >
-                <Link href={DAMODARAN_AI_PATH}>Ask Damodaran</Link>
-              </Button>
-            ) : (
-              <NavigationItem key={item.label} data={item} variant={"light"} />
-            )
-          )}
+          {navItems.map((item, index) => {
+            // Render dropdown items with Popover
+            if (item.dropDown) {
+              return (
+                <Popover key={item.label}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      className={cn(
+                        "[&_svg]:size-4 [&[data-state=closed]&_.up]:hidden [&[data-state=open]&_.down]:hidden",
+                        DESKTOP_NAV_LINK_CLASS
+                      )}
+                      size="content"
+                      variant="ghost"
+                    >
+                      {item.label}
+                      <IconChevronUp size={16} className="up" />
+                      <IconChevronDown size={16} className="down" />
+                    </Button>
+                  </PopoverTrigger>
+                  {item.dropDown}
+                </Popover>
+              );
+            } 
+            
+            // Render plain link items (no ActiveLinkWrapper to avoid client component issues)
+            const href = getSafeHref(item);
+            
+            if (href) {
+              const buttonKey = `nav-item-${index}-${item.label}`;
+              
+              // About Us needs to be rendered as direct Link (Button wrapper causes React hydration issues)
+              // Apply Button ghost variant classes + DESKTOP_NAV_LINK_CLASS to match other nav items exactly
+              if (item.label === "About Us") {
+                return (
+                  <Link
+                    key={buttonKey}
+                    href={href}
+                    className={cn(
+                      "inline-flex items-center justify-center gap-1.5 rounded-md text-button whitespace-nowrap transition-all duration-300 box-border disabled:cursor-not-allowed disabled:opacity-50 [&_svg]:shrink-0 bg-white text-zinc-800 hover:bg-zinc-100 focus-visible:bg-white data-[state=active]:bg-white disabled:bg-zinc-200 disabled:text-zinc-500 data-[active=true]:bg-zinc-200 data-[active=true]:text-zinc-900",
+                      DESKTOP_NAV_LINK_CLASS
+                    )}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              }
+              
+              return (
+                <Button
+                  key={buttonKey}
+                  size="content"
+                  variant="ghost"
+                  className={cn(DESKTOP_NAV_LINK_CLASS)}
+                  asChild
+                >
+                  <Link href={href}>{item.label}</Link>
+                </Button>
+              );
+            }
+            
+            return null;
+          })}
         </div>
 
         <div className="flex items-center w-fit gap-3">
