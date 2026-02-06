@@ -14,10 +14,6 @@ const resources: DropItemProps[] = [
     href: ROUTES.SPHERE,
   },
   {
-    title: "FAQ",
-    href: ROUTES.FAQ,
-  },
-  {
     title: "Come Work with Us",
     href: ROUTES.CAREERS,
     className: "justify-between gap-0",
